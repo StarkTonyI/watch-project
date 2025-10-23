@@ -72,59 +72,94 @@ const svgRef = useRef(null);
 const imgRef = useRef(null);
 
 useLayoutEffect(() => {
-  const mm = gsap.matchMedia();
-
   if (!scope.current || !svgRef.current || !imgRef.current) return;
 
-  const ctx = gsap.context(() => {
-    const tl = gsap.timeline();
+  const mm = gsap.matchMedia();
+  let ctx;
+  let rafId;
 
-    const imgRect = imgRef.current.getBoundingClientRect();
-    const imgCenterX = imgRect.left + imgRect.width / 2;
-    const imgCenterY = imgRect.top + imgRect.height / 2;
+  const runAnimation = () => {
+    ctx = gsap.context(() => {
+      const tl = gsap.timeline();
 
-    const viewportCenterX = window.innerWidth / 2;
-    const viewportCenterY = window.innerHeight / 2;
+      const imgRect = imgRef.current.getBoundingClientRect();
+      const imgCenterX = imgRect.left + imgRect.width / 2;
+      const imgCenterY = imgRect.top + imgRect.height / 2;
 
-    const deltaX = imgCenterX - viewportCenterX;
-    const deltaY = imgCenterY - viewportCenterY;
+      const viewportCenterX = window.innerWidth / 2;
+      const viewportCenterY = window.innerHeight / 2;
 
-    mm.add("(min-width: 890px)", () => {
-      gsap.set(svgRef.current, { x: 0, y: 0, xPercent: -50, yPercent: -50 });
+      const deltaX = imgCenterX - viewportCenterX;
+      const deltaY = imgCenterY - viewportCenterY;
 
-      tl.set('.my-ellipse', { drawSVG: "0%", stroke: 'white', strokeWidth: 3 });
-      tl.set("#my-path-animate", { drawSVG: "0%" })
-        .to("#my-path-animate", { drawSVG: "100%", duration: 2, ease: "power2.out" })
-        .to("#clip-1 rect", { height: 600, duration: 1.5, ease: "power2.inOut" }, "-=1")
-        .to('.my-ellipse', { drawSVG: '100%', duration: 2, ease: "power2.out", strokeWidth: 2, stroke: 'rgba(76, 79, 82, 0.2)' })
-        .to(svgRef.current, {
-          x: deltaX - deltaX / 4,
-          y: deltaY,
-          duration: 1.8,
-          scale: 0.6,
-          ease: 'power2.out'
-        })
-        .to('.svg-watch', { display: 'none' }, '-=0.9')
-        .to('.image-clip', { opacity: 1, clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 2 }, '-=0.4');
-    });
-    mm.add("(max-width: 889px)", () => {
-      gsap.set(svgRef.current, { x: 0, y: 0, xPercent: -50, yPercent: -50 });
+      mm.add("(min-width: 890px)", () => {
+        gsap.set(svgRef.current, { x: 0, y: 0, xPercent: -50, yPercent: -50 });
 
-      tl.set('.my-ellipse', { drawSVG: "0%", stroke: 'white', strokeWidth: 3 });
-      tl.set("#my-path-animate", { drawSVG: "0%" })
-        .to("#my-path-animate", { drawSVG: "100%", duration: 2, ease: "power2.out" })
-        .to("#clip-1 rect", { height: 600, duration: 1.5, ease: "power2.inOut" }, "-=1")
-        .to('.my-ellipse', { drawSVG: '100%', duration: 2, ease: "power2.out", strokeWidth: 2, stroke: 'rgba(76, 79, 82, 0.2)' })
-        .to('.svg-watch',  { opacity:0, duration:1 }, '-=0.9')
-    })
+        tl.set('.my-ellipse', { drawSVG: "0%", stroke: 'white', strokeWidth: 3 });
+        tl.set("#my-path-animate", { drawSVG: "0%" })
+          .to("#my-path-animate", { drawSVG: "100%", duration: 2, ease: "power2.out" })
+          .to("#clip-1 rect", { height: 600, duration: 1.5, ease: "power2.inOut" }, "-=1")
+          .to('.my-ellipse', {
+            drawSVG: '100%',
+            duration: 2,
+            ease: "power2.out",
+            strokeWidth: 2,
+            stroke: 'rgba(76, 79, 82, 0.2)'
+          })
+          .to(svgRef.current, {
+            x: deltaX - deltaX / 4,
+            y: deltaY,
+            duration: 1.8,
+            scale: 0.6,
+            ease: 'power2.out'
+          })
+          .to('.svg-watch', { display: 'none' }, '-=0.9')
+          .to('.image-clip', {
+            opacity: 1,
+            clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+            duration: 2
+          }, '-=0.4');
+      });
 
-  }, scope);
+      mm.add("(max-width: 889px)", () => {
+        gsap.set(svgRef.current, { x: 0, y: 0, xPercent: -50, yPercent: -50 });
+
+        tl.set('.my-ellipse', { drawSVG: "0%", stroke: 'white', strokeWidth: 3 });
+        tl.set("#my-path-animate", { drawSVG: "0%" })
+          .to("#my-path-animate", { drawSVG: "100%", duration: 2, ease: "power2.out" })
+          .to("#clip-1 rect", { height: 600, duration: 1.5, ease: "power2.inOut" }, "-=1")
+          .to('.my-ellipse', {
+            drawSVG: '100%',
+            duration: 2,
+            ease: "power2.out",
+            strokeWidth: 2,
+            stroke: 'rgba(76, 79, 82, 0.2)'
+          })
+          .to('.svg-watch', { opacity: 0, duration: 1 }, '-=0.9');
+      });
+    }, scope);
+  };
+
+  const start = () => {
+    // requestAnimationFrame гарантирует, что layout завершён
+    rafId = requestAnimationFrame(runAnimation);
+  };
+
+  // если изображение уже загружено — стартуем сразу
+  if (imgRef.current.complete) {
+    start();
+  } else {
+    imgRef.current.onload = start;
+  }
 
   return () => {
+    cancelAnimationFrame(rafId);
     if (ctx) ctx.revert();
     if (mm) mm.revert();
+    if (imgRef.current) imgRef.current.onload = null; // чистим обработчик
   };
 }, []);
+
 
 
 return <div ref={scope} className="w-full flex justify-center items-center min-h-[100vh] relative">
