@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import apple from '../../assets/watchs/apple.png';
 import xaomi from '../../assets/watchs/xaomi.png';
 import fitbit from '../../assets/watchs/fitbit.png';

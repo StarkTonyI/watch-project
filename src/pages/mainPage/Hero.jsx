@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import gsap from 'gsap';
 import { useLayoutEffect, useRef } from 'react';
@@ -17,7 +18,7 @@ export default function Hero() {
 // React + Tailwind (Motion оставил как есть)
 <section className="bg-transparent py-16 md:py-20" ref={heroBlock}>
   <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 mt-11  md:gap-10 items-center">
-    <motion.div
+   <motion.div
       initial={{ opacity: 0, x: -50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6 }}

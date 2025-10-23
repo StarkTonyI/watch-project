@@ -3,7 +3,7 @@ import Hero from './pages/mainPage/Hero';
 import Features from './pages/mainPage/Features';
 import Footer from "./pages/footer/footer";
 import SVGWatch from "./svgStyle/svg";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import {  useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import WatchList from "./pages/mainPage/watchList/watchList";
