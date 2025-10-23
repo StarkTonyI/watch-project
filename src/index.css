@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/*
+
+  
+ Если используешь глобально */
+body {
+  background: linear-gradient(to bottom right, #383638 5%, #000000 48%, #0b0b0b 100%);
+}
+.image-clip{
+
+  clip-path: polygon(0 22%, 50% 22%, 50% 75%, 0% 75%);
+}
+
+.svg-watch {
+  position: absolute; /* чтобы центр был всегда по экрану */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
