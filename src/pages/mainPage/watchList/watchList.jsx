@@ -97,9 +97,24 @@ gsap.utils.toArray('.watchList-fill-star').forEach((star, i) => {
     });
 });
 
-mm.add("(max-width: 630px)", () => {
+
+mm.add("(max-width: 449px)", () => {
   gsap.to(scollWatch.current, {
-    yPercent: 260,
+    yPercent: 350,
+    scale: 1.3,
+    scrollTrigger: {
+      trigger: scollWatch.current,
+      start: 'center center',
+      end: '+=500',
+      scrub: true,
+    }
+  });
+});
+
+
+mm.add("(min-width: 450px)", () => {
+  gsap.to(scollWatch.current, {
+    yPercent: 300,
     scale: 1.3,
     scrollTrigger: {
       trigger: scollWatch.current,
